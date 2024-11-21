@@ -19,13 +19,13 @@ my $semConvRef = "$otelSpecRepoUrl/blob/main/semantic_conventions/README.md";
 my $specBasePath = '/docs/specs';
 my %versions = qw(
   spec: 1.39.0
-  otlp: 1.3.2
+  otlp: 1.4.0
   semconv: 1.28.0
 );
 my $otelSpecVers = $versions{'spec:'};
 my $otlpSpecVers = $versions{'otlp:'};
 my $semconvVers = $versions{'semconv:'};
-my $warn2 = 0; # TODO remove along with warning 002
+my $patchMsg2 = 0; # TODO remove along with patch-message 002
 
 sub printTitleAndFrontMatter() {
   print "---\n";
@@ -46,7 +46,7 @@ sub printTitleAndFrontMatter() {
   } elsif ($ARGV =~ /otel\/specification\/logs\/api.md$/) {
     if ($otelSpecVers ne "1.39.0") {
       # TODO: delete the enclosing elsif body
-      print STDOUT "WARNING [001]: $0: remove obsolete code now that OTel spec has been updated.\n"
+      print STDOUT "INFO [001]: $0: remove obsolete code now that OTel spec has been updated.\n"
     }
     $frontMatterFromFile .= "linkTitle: API\naliases: [bridge-api]\n";
   }
@@ -116,13 +116,13 @@ while(<>) {
 
   # SPECIFICATION custom processing
 
-  # TODO: drop the entire if-then-else statement patch code when OTel spec vers contains
+  # TODO: drop the entire if statement patch code when OTel spec vers contains
   # https://github.com/open-telemetry/opentelemetry-specification/pull/4287,
   # which should be vers > 1.39.0.
-  if ($otelSpecVers eq "1.39.0") {
+  if ($ARGV =~ /otel\/spec/) {
     s|(/api\.md)#logs-api\b|$1|g;
-  } elsif ($ARGV =~ /otel\/spec/) {
-    print STDOUT "WARNING [002]: $0: remove obsolete code now that OTel spec has been updated.\n" unless $warn2++
+    print STDOUT "INFO [002]: $0: remove obsolete patch code now that OTel spec has been updated.\n"
+      if $otelSpecVers ne "1.39.0" && !$patchMsg2++
   }
 
   s|\(https://github.com/open-telemetry/opentelemetry-specification\)|($specBasePath/otel/)|;
